@@ -1,11 +1,13 @@
 const { log } = require('console');
 const { Socket } = require('socket.io');
 
+
 const app = require('express')();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {cors: {origin: 'http://localhost:5173'}}); 
 
 const PORT = 5001
+
 
 io.on('connection', socket => {
     console.log('Usuário conectado! Seu ID:', socket.id);
