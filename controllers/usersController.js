@@ -1,6 +1,6 @@
 const User = require('../models/Users');
-
 const models = require('../models/Users');
+const bcrypt = require('bcryptjs');
 
 
 async function registrarUsuarios(req, res) {
@@ -10,10 +10,12 @@ async function registrarUsuarios(req, res) {
         if (!username || !password) {
             return res.status(400).json({ error: 'Usuário e senha são obrigatórios.' });
         }
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
         const novoUsuario = await User.create({
             username,
-            password
+            password: hashedPassword
         });
 
         res.status(201).json({
@@ -29,6 +31,31 @@ async function registrarUsuarios(req, res) {
     }
 }
 
+//Aqui eu to comparando e facilitando para o front entender as senhas que são digitas. 
+//Após serem Digitas minha função LoginUser compara com a senha
+//digitar com a hash que fica no BD. 
+
+const loginUser = async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        const user = await User.findOne({ username });
+
+        if (!user) {
+            return res.status(404).send('Usuário não encontrado.');
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.status(400).send('Senha incorreta.');
+        }
+        res.status(200).send(`Login bem-sucedido! Bem-vindo, ${user.username}`);
+
+    } catch (error) {
+        res.status(500).send(`Erro no servidor: ${error.message}`);
+    }
+};
+
 
 async function buscarUsuarios(req, res) {
     try {
@@ -43,5 +70,6 @@ async function buscarUsuarios(req, res) {
 
 module.exports = {
     buscarUsuarios,
-    registrarUsuarios
+    registrarUsuarios,
+    loginUser
 }
