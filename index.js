@@ -12,8 +12,9 @@ const io = new Server(server, {
     cors: { origin: 'http://localhost:5173' }
 });
 
-
 connectMongo(); 
+app.use(express.json());
+app.use('/api/users', require('./routes/usersRoutes'));
 
 io.on('connection', socket => {
     console.log('Usuário conectado! Seu ID:', socket.id);
@@ -42,5 +43,4 @@ io.on('connection', socket => {
     })
 })
 
-
-server.listen(PORT, () => console.log('Sevidor UP ツ'))
+server.listen(PORT, () => console.log(`Sevidor UP ツ Rodando na porta: ${PORT}`))

@@ -3,12 +3,11 @@ const router = express.Router();
 
 const {
     buscarUsuarios,
-    buscarUmUsuario
+    registrarUsuarios
 
 } = require('../controllers/usersController');
 
 router.get('/', buscarUsuarios);
-
-router.get('/buscarUmUsuario', buscarUmUsuario);
+router.post('/registrarUsuarios', registrarUsuarios)
 
 module.exports = router;
