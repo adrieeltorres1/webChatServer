@@ -41,15 +41,19 @@ const loginUser = async (req, res) => {
         const user = await User.findOne({ username });
 
         if (!user) {
-            return res.status(404).send('Usuário não encontrado.');
+            return res.status(404).json({ error: 'Usuário não encontrado.' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-            return res.status(400).send('Senha incorreta.');
+            return res.status(400).json({ error: 'Senha incorreta.' });
         }
-        res.status(200).send(`Login bem-sucedido! Bem-vindo, ${user.username}`);
+        res.status(200).json({ 
+            message: `Login bem-sucedido! Bem-vindo, ${user.username}`,
+            userId: user._id, 
+            username: user.username 
+        });
 
     } catch (error) {
         res.status(500).send(`Erro no servidor: ${error.message}`);
