@@ -4,6 +4,7 @@ const http = require('http');
 const express = require('express');
 const { Server } = require('socket.io');
 const cors = require('cors');
+const { join } = require('path');
 const PORT = 5001;
 
 const app = express();
@@ -27,6 +28,10 @@ io.on('connection', socket => {
         console.log(`Nickname definido para ${username} (ID: ${socket.id})`);
     });
 
+    socket.on('join_room', room => {
+        socket.join(room)
+    })
+
     socket.on('send_message', (data) => {
         const author = socket.data.username || 'Desconhecido';
 
@@ -36,7 +41,8 @@ io.on('connection', socket => {
             timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
         };
 
-        io.emit('receive_message', messageData);
+        io.in(data.room).emit('receive_message', messageData);
+        
     });
 
 

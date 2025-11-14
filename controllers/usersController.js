@@ -24,9 +24,16 @@ async function registrarUsuarios(req, res) {
         });
 
     } catch (error) {
-        res.status(400).json({
-            error: 'Falha ao criar usuário',
-            message: error.message
+
+        if (error.code === 11000) {
+            res.status(400).json({
+            error: 'Usuário já existe',
+            message: 'Este usuário já existe, pense em um diferente.'
+        });
+        }
+        res.status(500).json({ 
+            error: 'Falha ao criar usuário', 
+            message: error.message 
         });
     }
 }
