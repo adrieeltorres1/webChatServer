@@ -27,13 +27,13 @@ async function registrarUsuarios(req, res) {
 
         if (error.code === 11000) {
             res.status(400).json({
-            error: 'Usuário já existe',
-            message: 'Este usuário já existe, pense em um diferente.'
-        });
+                error: 'Usuário já existe',
+                message: 'Este usuário já existe, pense em um diferente.'
+            });
         }
-        res.status(500).json({ 
-            error: 'Falha ao criar usuário', 
-            message: error.message 
+        res.status(500).json({
+            error: 'Falha ao criar usuário',
+            message: error.message
         });
     }
 }
@@ -56,10 +56,10 @@ const loginUser = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ error: 'Senha incorreta.' });
         }
-        res.status(200).json({ 
+        res.status(200).json({
             message: `Login bem-sucedido! Bem-vindo, ${user.username}`,
-            userId: user._id, 
-            username: user.username 
+            userId: user._id,
+            username: user.username
         });
 
     } catch (error) {
@@ -79,8 +79,25 @@ async function buscarUsuarios(req, res) {
 }
 
 
+async function deletarUsuario(req, res) {
+    const  {username}  = req.body;
+    try {
+        const deletado = await User.deleteOne({username: username});
+        if (deletado.deletedCount === 0) {
+            res.status(400).json({error: 'Usuário não encontrado'});
+        }
+        res.status(200).message('Usuário deletado com sucesso!')
+
+    } catch (error) {
+        console.error('Erro de MongoDB:', error);
+        res.status(400).json({error: 'Erro ao deletar usuário', message: error.message})
+    }
+
+}
+
 module.exports = {
     buscarUsuarios,
     registrarUsuarios,
-    loginUser
+    loginUser,
+    deletarUsuario
 }
